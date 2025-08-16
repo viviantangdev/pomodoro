@@ -4,15 +4,22 @@ const SESSION_TYPE = {
   WORKING: 'Working',
   BREAK: 'Break',
 };
+const BREAK_TYPE = {
+  SHORT: 'short',
+  LONG: 'long',
+};
 
 function App() {
   const pomodoroMinutes = 0.1;
-  const breakMinutes = 0.05;
+  const shortBreakMinutes = 0.05;
+  const longBreakMinutes = 0.2;
 
   const [sessionType, setSessionType] = useState(SESSION_TYPE.WORKING);
   const [pomodoroLeft, setPomodoroLeft] = useState(pomodoroMinutes * 60);
-  const [breakLeft, setBreakLeft] = useState(breakMinutes * 60);
-  const [isTimerOn, setIsTimerOn] = useState(false);
+  const [breakType, setBreakType] = useState(BREAK_TYPE.SHORT);
+  const [breakLeft, setBreakLeft] = useState(shortBreakMinutes * 60);
+  const [count, setCount] = useState(0);
+
   const intervalRef = useRef(null);
 
   const formatTime = (timeLeft) => {
@@ -21,8 +28,6 @@ function App() {
     return `${min}:${sec}`;
   };
 
-  const toggleTimer = () => setIsTimerOn(!isTimerOn);
-
   const clearTick = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -30,14 +35,17 @@ function App() {
     }
   };
 
-  const handleWork = () => {
+  const beginWork = () => {
     setSessionType(SESSION_TYPE.WORKING);
     setPomodoroLeft(pomodoroMinutes * 60);
   };
 
-  const handleBreak = () => {
+  const handleBreak = (afterCount) => {
+    const isLong = afterCount % 4 === 0;
+    const dur = (isLong ? longBreakMinutes : shortBreakMinutes) * 60;
+    setBreakType(isLong ? BREAK_TYPE.LONG : BREAK_TYPE.SHORT);
+    setBreakLeft(dur);
     setSessionType(SESSION_TYPE.BREAK);
-    setBreakLeft(breakMinutes * 60);
   };
 
   // ----- ticking intervals -----
@@ -47,9 +55,16 @@ function App() {
       setPomodoroLeft((prev) => {
         if (prev <= 1) {
           clearTick();
-          handleBreak();
-          startBreakInterval();
-
+          setCount((c) => {
+            const updated = c + 1;
+            handleBreak(updated);
+            if (updated % 4 === 0) {
+              startLongBreakInterval();
+            } else {
+              startBreakInterval();
+            }
+            return updated;
+          });
           return 0;
         }
         return prev - 1;
@@ -63,8 +78,22 @@ function App() {
       setBreakLeft((prev) => {
         if (prev <= 1) {
           clearTick();
-          handleWork();
+          beginWork();
           startWorkInterval();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const startLongBreakInterval = () => {
+    clearTick();
+    intervalRef.current = setInterval(() => {
+      setBreakLeft((prev) => {
+        if (prev <= 1) {
+          clearTick();
+          console.log('finished');
           return 0;
         }
         return prev - 1;
@@ -74,13 +103,26 @@ function App() {
 
   // ----- UI actions -----
   const startTimer = () => {
-    if (intervalRef.current) return; 
+    if (intervalRef.current) return; // already running
     if (sessionType === SESSION_TYPE.WORKING) {
       setPomodoroLeft((v) => (v <= 0 ? pomodoroMinutes * 60 : v));
       startWorkInterval();
     } else {
-      setBreakLeft((v) => (v <= 0 ? breakMinutes * 60 : v));
-      startBreakInterval();
+      setBreakLeft((v) => {
+        if (v <= 1) {
+          const dur =
+            (breakType === BREAK_TYPE.LONG
+              ? longBreakMinutes
+              : shortBreakMinutes) * 60;
+          return dur;
+        }
+        return v;
+      });
+      if (breakType === BREAK_TYPE.LONG) {
+        startLongBreakInterval();
+      } else {
+        startBreakInterval();
+      }
     }
   };
 
@@ -88,19 +130,12 @@ function App() {
     clearTick();
   };
 
-  const resetTimer = () => {
-    clearTick();
-    setIsTimerOn(false);
-    setSessionType(SESSION_TYPE.WORKING);
-    setPomodoroLeft(pomodoroMinutes * 60);
-    setBreakLeft(breakMinutes * 60);
-  };
-
   return (
     <>
       <h1>Pomodoro</h1>
       <p>
-        <strong>{sessionType}</strong>
+        Session: <strong>{sessionType}</strong>
+        {sessionType === SESSION_TYPE.BREAK && `(${breakType.toLowerCase()})`}
       </p>
       <div className='timer-display'>
         <p>
@@ -110,19 +145,14 @@ function App() {
         </p>
       </div>
       <div className='buttons'>
-        <button
-          type='button'
-          onClick={() => {
-            toggleTimer();
-            isTimerOn ? pauseTimer() : startTimer();
-          }}
-        >
-          {isTimerOn ? 'Pause' : 'Start'}
+        <button type='button' onClick={startTimer}>
+          Start
         </button>
-        <button type='button' onClick={resetTimer}>
-          Reset
+        <button type='button' onClick={pauseTimer}>
+          Pause
         </button>
       </div>
+      <span>Count: {count}</span>
     </>
   );
 }
