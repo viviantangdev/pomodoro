@@ -1,128 +1,26 @@
-import { useRef, useState } from 'react';
-
-const SESSION_TYPE = {
-  WORKING: 'Working',
-  BREAK: 'Break',
-};
+import { useState } from 'react';
+import Settings from './components/Settings';
+import Timer from './components/Timer';
+import SettingsContext from './context/SettingsContext';
 
 function App() {
-  const pomodoroMinutes = 0.1;
-  const breakMinutes = 0.05;
-
-  const [sessionType, setSessionType] = useState(SESSION_TYPE.WORKING);
-  const [pomodoroLeft, setPomodoroLeft] = useState(pomodoroMinutes * 60);
-  const [breakLeft, setBreakLeft] = useState(breakMinutes * 60);
-  const [isTimerOn, setIsTimerOn] = useState(false);
-  const intervalRef = useRef(null);
-
-  const formatTime = (timeLeft) => {
-    const min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-    const sec = String(Math.floor(timeLeft % 60)).padStart(2, '0');
-    return `${min}:${sec}`;
-  };
-
-  const toggleTimer = () => setIsTimerOn(!isTimerOn);
-
-  const clearTick = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
-
-  const handleWork = () => {
-    setSessionType(SESSION_TYPE.WORKING);
-    setPomodoroLeft(pomodoroMinutes * 60);
-  };
-
-  const handleBreak = () => {
-    setSessionType(SESSION_TYPE.BREAK);
-    setBreakLeft(breakMinutes * 60);
-  };
-
-  // ----- ticking intervals -----
-  const startWorkInterval = () => {
-    clearTick();
-    intervalRef.current = setInterval(() => {
-      setPomodoroLeft((prev) => {
-        if (prev <= 1) {
-          clearTick();
-          handleBreak();
-          startBreakInterval();
-
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const startBreakInterval = () => {
-    clearTick();
-    intervalRef.current = setInterval(() => {
-      setBreakLeft((prev) => {
-        if (prev <= 1) {
-          clearTick();
-          handleWork();
-          startWorkInterval();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  // ----- UI actions -----
-  const startTimer = () => {
-    if (intervalRef.current) return; 
-    if (sessionType === SESSION_TYPE.WORKING) {
-      setPomodoroLeft((v) => (v <= 0 ? pomodoroMinutes * 60 : v));
-      startWorkInterval();
-    } else {
-      setBreakLeft((v) => (v <= 0 ? breakMinutes * 60 : v));
-      startBreakInterval();
-    }
-  };
-
-  const pauseTimer = () => {
-    clearTick();
-  };
-
-  const resetTimer = () => {
-    clearTick();
-    setIsTimerOn(false);
-    setSessionType(SESSION_TYPE.WORKING);
-    setPomodoroLeft(pomodoroMinutes * 60);
-    setBreakLeft(breakMinutes * 60);
-  };
-
+  const [showSettings, setShowSettings] = useState(false);
+  const [workMinutes, setWorkMinutes] = useState(1);
+  const [breakMinutes, setBreakMinutes] = useState(2);
   return (
     <>
       <h1>Pomodoro</h1>
-      <p>
-        <strong>{sessionType}</strong>
-      </p>
-      <div className='timer-display'>
-        <p>
-          {sessionType === SESSION_TYPE.WORKING
-            ? formatTime(pomodoroLeft)
-            : formatTime(breakLeft)}
-        </p>
-      </div>
-      <div className='buttons'>
-        <button
-          type='button'
-          onClick={() => {
-            toggleTimer();
-            isTimerOn ? pauseTimer() : startTimer();
-          }}
-        >
-          {isTimerOn ? 'Pause' : 'Start'}
-        </button>
-        <button type='button' onClick={resetTimer}>
-          Reset
-        </button>
-      </div>
+      <SettingsContext.Provider value={{
+        showSettings,
+        setShowSettings,
+        workMinutes,
+        breakMinutes,
+        setWorkMinutes,
+        setBreakMinutes,
+      }}>
+
+      {showSettings ? <Settings /> : <Timer />}
+      </SettingsContext.Provider>
     </>
   );
 }
