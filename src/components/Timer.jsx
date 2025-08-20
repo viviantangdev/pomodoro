@@ -84,7 +84,6 @@ const Timer = () => {
               isPausedRef.current = false;
             }}
           >
-            {' '}
             <FaRegPlayCircle />
           </Button>
         ) : (
@@ -99,7 +98,13 @@ const Timer = () => {
         )}
       </div>
       <div>
-        <Button onClick={() => settingsInfo.setShowSettings(true)}>
+        <Button
+          onClick={() => {
+            setIsPaused(true);
+            isPausedRef.current = true;
+            settingsInfo.setShowSettings(true);
+          }}
+        >
           <IoSettings />
         </Button>
       </div>

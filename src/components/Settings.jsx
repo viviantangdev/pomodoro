@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import 'react-range-slider-input/dist/style.css';
 import SettingsContext from '../context/SettingsContext';
+import Button from './Button';
 const Settings = () => {
   const settingsInfo = useContext(SettingsContext);
 
@@ -38,16 +39,10 @@ const Settings = () => {
         />
       </div>
       <div>
-        {' '}
-        <button type='button' onClick={handleSave}>
-          Save
-        </button>
-        <button
-          type='button'
-          onClick={() => settingsInfo.setShowSettings(false)}
-        >
+        <Button onClick={()=> {handleSave();settingsInfo.setShowSettings(false)}}>Save</Button>
+        <Button onClick={() => settingsInfo.setShowSettings(false)}>
           Back
-        </button>
+        </Button>
       </div>
     </div>
   );

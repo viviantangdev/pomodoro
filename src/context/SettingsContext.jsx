@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const SettingsContext = React.createContext({});
 
 export const SettingsProvider = ({ children }) => {
-  const [showSettings, setShowSettings] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
   const [workMinutes, setWorkMinutes] = useState(1);
   const [breakMinutes, setBreakMinutes] = useState(2);
 
