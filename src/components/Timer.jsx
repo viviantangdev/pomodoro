@@ -1,10 +1,10 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { FaRegPauseCircle, FaRegPlayCircle } from 'react-icons/fa';
+import { IoSettings } from 'react-icons/io5';
 import SettingsContext from '../context/SettingsContext';
-import PauseButton from './PauseButton';
-import PlayButton from './PlayButton';
-import SettingsButton from './SettingsButton';
+import Button from './Button';
 
 const Timer = () => {
   const settingsInfo = useContext(SettingsContext);
@@ -78,24 +78,30 @@ const Timer = () => {
       />
       <div>
         {isPaused ? (
-   <PlayButton
+          <Button
             onClick={() => {
               setIsPaused(false);
               isPausedRef.current = false;
             }}
-          />
+          >
+            {' '}
+            <FaRegPlayCircle />
+          </Button>
         ) : (
-                  <PauseButton
+          <Button
             onClick={() => {
               setIsPaused(true);
               isPausedRef.current = true;
             }}
-          />
-         
+          >
+            <FaRegPauseCircle />
+          </Button>
         )}
       </div>
       <div>
-        <SettingsButton onClick={() => settingsInfo.setShowSettings(true)} />
+        <Button onClick={() => settingsInfo.setShowSettings(true)}>
+          <IoSettings />
+        </Button>
       </div>
     </div>
   );
