@@ -2,7 +2,7 @@ const Modal = ({ children, ...props }) => {
   return (
     <div className='backdrop' {...props}>
       <div
-        className='modal'
+        className='modal rounded-2xl py-10 px-12'
         onClick={(e) => e.stopPropagation()} // Prevent backdrop click when clicking inside modal
       >
         {children}

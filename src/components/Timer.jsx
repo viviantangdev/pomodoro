@@ -1,10 +1,11 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import {
+  buildStyles,
+  CircularProgressbarWithChildren,
+} from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { FaRegPauseCircle, FaRegPlayCircle } from 'react-icons/fa';
-import { IoSettings } from 'react-icons/io5';
+import { FaGear, FaPause, FaPlay } from 'react-icons/fa6';
 import SettingsContext from '../context/SettingsContext';
-import Button from './Button';
 
 const Timer = () => {
   const settingsInfo = useContext(SettingsContext);
@@ -61,53 +62,64 @@ const Timer = () => {
 
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
 
-  const minutes = Math.floor(secondsLeft / 60);
+  let minutes = Math.floor(secondsLeft / 60);
+  if (minutes < 10) minutes = '0' + minutes;
   let seconds = secondsLeft % 60;
   if (seconds < 10) seconds = '0' + seconds;
 
+  const pathColor =
+    mode === 'work' ? 'rgba(245,69,69,0.8)' : 'rgba(65,207,242,0.8)';
+
   return (
-    <div>
-      <CircularProgressbar
+    <div className='flex flex-col justify-center items-center'>
+      <CircularProgressbarWithChildren
         value={percentage}
-        text={`${minutes}:${seconds}`}
+        strokeWidth={4}
         styles={buildStyles({
-          textColor: '#f88',
-          pathColor: '#3e98c7',
-          trailColor: '#d6d6d6',
+          pathColor: pathColor,
+          trailColor: 'rgba(50,50,50,0.5)',
         })}
-      />
-      <div>
+      >
+        <p className='text-4xl'>{mode === 'work' ? '🍅' : '☕️'}</p>
+        <p className='text-6xl mt-2'>{`${minutes}:${seconds}`}</p>
+        <p className='font-light'>{mode === 'work' ? 'FOCUS' : 'BREAK'}</p>
         {isPaused ? (
-          <Button
+          <button
+            type='button'
             onClick={() => {
               setIsPaused(false);
               isPausedRef.current = false;
             }}
+            className='text-4xl mt-5'
           >
-            <FaRegPlayCircle />
-          </Button>
+            <FaPlay />
+          </button>
         ) : (
-          <Button
+          <button
+            type='button'
             onClick={() => {
               setIsPaused(true);
               isPausedRef.current = true;
             }}
+            className='text-4xl mt-5'
           >
-            <FaRegPauseCircle />
-          </Button>
+            <FaPause />
+          </button>
         )}
-      </div>
-      <div>
-        <Button
-          onClick={() => {
-            setIsPaused(true);
-            isPausedRef.current = true;
-            settingsInfo.setShowSettings(true);
-          }}
-        >
-          <IoSettings />
-        </Button>
-      </div>
+      </CircularProgressbarWithChildren>
+
+      <button
+        type='button'
+        onClick={() => {
+          setIsPaused(true);
+          isPausedRef.current = true;
+          settingsInfo.setShowSettings(true);
+        }}
+        className='flex justify-center items-center gap-1.5 mt-6 px-6 py-2 rounded-2xl border-black/50 dark:border-slate-50/10 border-2'
+      >
+        <FaGear />
+        Settings
+      </button>
     </div>
   );
 };

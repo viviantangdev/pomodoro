@@ -2,14 +2,17 @@ import { useContext } from 'react';
 import Modal from './components/Modal';
 import Settings from './components/Settings';
 import Timer from './components/Timer';
+import Footer from './components/Footer';
 import SettingsContext, { SettingsProvider } from './context/SettingsContext';
 
 function App() {
   return (
     <>
-      <h1>Pomodoro</h1>
       <SettingsProvider>
-        <AppContent />
+        <main>
+          <AppContent />
+        </main>
+        <Footer/>
       </SettingsProvider>
     </>
   );
