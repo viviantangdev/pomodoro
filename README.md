@@ -6,10 +6,11 @@ A simple and interactive Pomodoro Timer app to boost productivity using focused 
 
 ## Demo
 
+Live Demo: [https://viviantangdev.github.io/pomodoro/](https://viviantangdev.github.io/pomodoro/)
+
 ![Pomodoro Screenshot](./image_work.png)
 ![Pomodoro Screenshot](./image_break.png)
 
-Live Demo: [https://your-app-demo-link.com](https://your-app-demo-link.com)
 
 ---
 
