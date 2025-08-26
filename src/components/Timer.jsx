@@ -4,7 +4,7 @@ import {
   CircularProgressbarWithChildren,
 } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { FaGear, FaPause, FaPlay } from 'react-icons/fa6';
+import { FaArrowRotateRight, FaGear, FaPause, FaPlay } from 'react-icons/fa6';
 import SettingsContext from '../context/SettingsContext';
 
 const Timer = () => {
@@ -22,6 +22,21 @@ const Timer = () => {
     secondsLeftRef.current = secondsLeftRef.current - 1;
     setSecondsLeft(secondsLeftRef.current);
   }
+
+  function resetTimer() {
+  // pause timer
+  setIsPaused(true);
+  isPausedRef.current = true;
+
+  // reset mode to work
+  setMode('work');
+  modeRef.current = 'work';
+
+  // reset seconds to full work time
+  const workSeconds = settingsInfo.workMinutes * 60;
+  setSecondsLeft(workSeconds);
+  secondsLeftRef.current = workSeconds;
+}
 
   useEffect(() => {
     function switchMode() {
@@ -108,18 +123,28 @@ const Timer = () => {
         )}
       </CircularProgressbarWithChildren>
 
-      <button
-        type='button'
-        onClick={() => {
-          setIsPaused(true);
-          isPausedRef.current = true;
-          settingsInfo.setShowSettings(true);
-        }}
-        className='flex justify-center items-center gap-1.5 mt-6 px-6 py-2 rounded-2xl border-black/50 dark:border-slate-50/10 border-2'
-      >
-        <FaGear />
-        Settings
-      </button>
+      <div className='flex gap-1.5'>
+        <button
+          type='button'
+          onClick={resetTimer}
+          className='flex justify-center items-center gap-1.5 mt-6 px-6 py-2 rounded-2xl border-black/50 dark:border-slate-50/10 border-2'
+        >
+          <FaArrowRotateRight />
+          Reset
+        </button>
+        <button
+          type='button'
+          onClick={() => {
+            setIsPaused(true);
+            isPausedRef.current = true;
+            settingsInfo.setShowSettings(true);
+          }}
+          className='flex justify-center items-center gap-1.5 mt-6 px-6 py-2 rounded-2xl border-black/50 dark:border-slate-50/10 border-2'
+        >
+          <FaGear />
+          Settings
+        </button>
+      </div>
     </div>
   );
 };
