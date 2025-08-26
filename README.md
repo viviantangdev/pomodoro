@@ -6,17 +6,16 @@ A simple and interactive Pomodoro Timer app to boost productivity using focused 
 
 ## Demo
 
-Live Demo: [https://viviantangdev.github.io/pomodoro/](https://viviantangdev.github.io/pomodoro/)
+Live Demo: [click here](https://viviantangdev.github.io/pomodoro/)
 
-![Pomodoro Screenshot](./image_work.png)
-![Pomodoro Screenshot](./image_break.png)
+![Pomodoro Screenshot](./pompdoro_image.jpg)
 
 
 ---
 
 ## Features
 
-- Start and pause the timer
+- Start, pause and reset the timer
 - Customizable work and break durations
 - Dark/light mode support (follows system theme)
 ---
