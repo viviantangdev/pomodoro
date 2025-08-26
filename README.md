@@ -6,9 +6,9 @@ A simple and interactive Pomodoro Timer app to boost productivity using focused 
 
 ## Demo
 
-Live Demo: [click here](https://viviantangdev.github.io/pomodoro/)
+[Live Demo](https://viviantangdev.github.io/pomodoro/)
 
-![Pomodoro Screenshot](./pompdoro_image.jpg)
+![Pomodoro Screenshot](./pomodoro_image.jpg)
 
 
 ---
